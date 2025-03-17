@@ -11,6 +11,7 @@
 
 body {
   min-height: 100vh;
+  margin: 0;
 }
 
 @layer base {
@@ -29,5 +30,41 @@ body {
   h4 {
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
+  }
+
+  /* Table styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+  }
+  
+  th {
+    text-align: left;
+    padding: 0.25rem;
+    font-weight: var(--font-weight-semibold);
+    border-bottom: 2px solid var(--color-gray-200, #e5e7eb);
+  }
+  
+  td {
+    padding: 0.25rem;
+    border-bottom: 1px solid var(--color-gray-200, #e5e7eb);
+    border-right: 1px solid var(--color-gray-200, #e5e7eb);
+  }
+
+  td:last-child {
+    border-right: none;
+  }
+  
+  tr:hover {
+    background-color: var(--color-gray-50, #f9fafb);
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: var(--color-gray-50, #f9fafb);
+  }
+  
+  tbody tr:last-child td {
+    border-bottom: none;
   }
 }
