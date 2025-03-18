@@ -104,7 +104,7 @@ During evaluation, the gold patch (stripped of the autocomplete hunks) is applie
 ### Tool Notes
 Tools were generally setup and evaluated using default settings, with "agent" mode selected in chat where appropriate. Aside from Amazon Q, which does not allow users to choose the model to be used, all tools were evaluated with Claude 3.7 Sonnet as the LM backend. This consistency ensures that LiveSWEBench is an evaluation of the agentic scaffolding, rather than the underlying LM itself. The model was selected as the highest-performing model with broad support among agent tools.
 
-Github Copilot was evaluated using a pre-release build in Visual Studio Code - Insiders, to enable the agent functionality. In addition, GPT-4O was selected as the autocomplete model.
+Github Copilot was evaluated using a pre-release build in Visual Studio Code - Insiders, to enable the agent functionality.
 
 Agent and edit task patches were collected for all tools as of March 14th, 2025. Autocomplete evaluation was performed during the week of March 17th, 2025.
 # Limitations
