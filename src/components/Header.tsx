@@ -10,12 +10,12 @@ const Header = () => {
   return (
     <header className="w-full bg-white shadow-md py-8">
       <div className="mx-auto px-4">
-        <div className="flex flex-col items-center mb-8 pt-4">
-          <h1 className="text-5xl font-bold text-gray-800">LiveSWEBench</h1>
-          <p className="text-l text-gray-600 mt-2">How helpful are AI software engineering assistants in real-world scenarios?</p>
+        <div className="flex flex-col items-center mb-4 pt-4">
+          <h1 className="text-5xl font-bold text-gray-800 mb-2">LiveSWEBench</h1>
+          <p className="text-xl text-gray-600 mt-0 mb-0">How helpful are AI software engineering assistants in real-world scenarios?</p>
         </div>
         
-        <nav className="flex justify-center space-x-8 mt-4 flex-row">
+        <nav className="flex justify-center space-x-8 flex-row">
           <Link to="/" className={`px-3 py-2 text-gray-700 hover:text-blue-600 ${isActive('/')} no-underline`}>
             Leaderboard
           </Link>
