@@ -1,8 +1,25 @@
 import agentCsvData from '../assets/agent.csv?raw';
 import editCsvData from '../assets/edit.csv?raw';
 import autocompleteCsvData from '../assets/autocomplete.csv?raw';
+import LeaderboardTable from '../components/LeaderboardTable';
+import { useState } from 'react';
 
 const Leaderboard = () => {
+  const [sortBy, setSortBy] = useState<string>('global');
+  const [sortDirection, setSortDirection] = useState<string>('desc');
+  const [filters, setFilters] = useState({
+    agent: true,
+    edit: true,
+    autocomplete: true
+  });
+
+  // Define task types
+  const taskTypes = [
+    { key: 'agent', label: 'Agentic Programming' },
+    { key: 'edit', label: 'Targeted Editing' },
+    { key: 'autocomplete', label: 'Autocompletion' }
+  ];
+
   // Tool mapping for website links
   const toolWebsites: Record<string, string> = {
     "Windsurf": "https://www.windsurf.ai/",
@@ -45,59 +62,65 @@ const Leaderboard = () => {
       const editScore = editData.find((item) => item.Tool === tool)?.Score || null;
       const autocompleteScore = autocompleteData.find((item) => item.Tool === tool)?.Score || null;
 
-      // Calculate global average based on available scores
-      const availableScores = [agentScore, editScore, autocompleteScore].filter(
-        (score) => score !== null
-      );
-      const globalAverage = 
-        availableScores.length > 0
-          ? availableScores.reduce((sum, score) => sum + (score as number), 0) / availableScores.length
-          : 0;
-
       return {
-        name: tool,
-        website: toolWebsites[tool] || "#",
-        globalAverage,
-        agentScore,
-        editScore,
-        autocompleteScore,
+        tool: {
+          name: tool,
+          website: toolWebsites[tool] || "#",
+        },
+        agent: agentScore,
+        edit: editScore,
+        autocomplete: autocompleteScore,
       };
     });
 
     // Sort by global average
-    return leaderboardData.sort((a, b) => b.globalAverage - a.globalAverage);
+    return leaderboardData;
   };
 
   const leaderboardData = generateLeaderboardData();
 
-  // Format score for display
-  const formatScore = (score: number | null) => {
-    if (score === null) return "N/A";
-    return (score * 100).toFixed(1) + "%";
+  const handleUpdateSortBy = (column: string) => {
+    setSortBy(column);
   };
+
+  const handleUpdateSortDirection = (direction: string) => {
+    setSortDirection(direction);
+  };
+
+  const handleFilterChange = (filterName: keyof typeof filters) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: !prev[filterName]
+    }));
+  };
+
+  // Get active filter columns based on filter state
+  const activeFilterColumns = Object.entries(filters)
+    .filter(([_, isActive]) => isActive)
+    .map(([column]) => column);
 
   return (
     <div className="mx-auto px-8 py-8">
       <section className="mb-12">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-3xl font-bold mb-6">About</h2>
-          <p className="text-gray-700 mb-4">
+          <h2 className="text-3xl font-bold mb-6 text-center">About</h2>
+          <p className="text-gray-700 mb-3">
             LiveSWEBench is a benchmark designed to evaluate the software engineering capabilities of AI agent applications.
             We aim to answer the following questions:
-            <ul className="pl-4 list-outside list-disc">
-              <li>How skilled are AI coding assistants when operating fully autonomously?</li>
-              <li>How effective are AI coding assistants at operating under developer instruction?</li>
-              <li>How useful are AI coding assistants at supplementing developer code writing?</li>
-            </ul>
           </p>
-          <p className="text-gray-700 mb-4">
+          <ul>
+            <li>How skilled are AI coding assistants when operating fully autonomously?</li>
+            <li>How effective are AI coding assistants at operating under developer instruction?</li>
+            <li>How useful are AI coding assistants at supplementing developer code writing?</li>
+          </ul>
+          <p className="text-gray-700 mb-3">
             To answer these questions, we evaluate the performance of each assistant on three task types:
-            <ul className="pl-4 list-outside list-disc">
-              <li>Agentic Programming, where the assistant is given a high-level task and must complete it fully autonomously.</li>
-              <li>Targeted editing, where the assistant is given a more specific instruction and file to edit.</li>
-              <li>Autocompletion, where the assistant is prompted inline with a very specific instruction.</li>
-            </ul>
           </p>
+          <ul>
+            <li>Agentic Programming, where the assistant is given a high-level task and must complete it fully autonomously.</li>
+            <li>Targeted editing, where the assistant is given a more direct instruction and file to edit.</li>
+            <li>Autocompletion, where the assistant generates inline completions for a specific prompt.</li>
+          </ul>
           <p className="text-gray-700">
             Our task collection and evaluation framework is heavily inspired by that of <a className="text-blue-600" href="https://www.swebench.com/">SWE-Bench</a>.
           </p>
@@ -105,50 +128,32 @@ const Leaderboard = () => {
       </section>
 
       <section>
-        
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-3xl font-bold mb-6">Leaderboard</h2>
-          <div className="overflow-x-auto">
-            <table className="bg-white">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700 text-sm leading-normal">
-                  <th className="py-3 px-6 text-left">Name</th>
-                  <th className="py-3 px-6 text-center">Global Average</th>
-                  <th className="py-3 px-6 text-center">Agent % Resolved</th>
-                  <th className="py-3 px-6 text-center">Edit % Resolved</th>
-                  <th className="py-3 px-6 text-center">Autocomplete % Resolved</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-600 text-sm">
-                {leaderboardData.map((tool, index) => (
-                  <tr key={index} className={index % 2 ? "bg-gray-50" : "bg-white"}>
-                    <td className="py-3 px-6 text-left">
-                      <a 
-                        href={tool.website} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="text-blue-600 hover:text-blue-800 no-underline"
-                      >
-                        {tool.name}
-                      </a>
-                    </td>
-                    <td className="py-3 px-6 text-center font-semibold">
-                      {formatScore(tool.globalAverage)}
-                    </td>
-                    <td className="py-3 px-6 text-center">
-                      {formatScore(tool.agentScore)}
-                    </td>
-                    <td className="py-3 px-6 text-center">
-                      {formatScore(tool.editScore)}
-                    </td>
-                    <td className="py-3 px-6 text-center">
-                      {formatScore(tool.autocompleteScore)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="bg-white rounded-lg shadow-md p-6 overflow-hidden">
+          <h2 className="text-3xl font-bold mb-6 text-center">Leaderboard</h2>
+          
+          <div className="flex flex-col sm:flex-row justify-center items-center mb-4 sm:space-x-6">
+            {taskTypes.map(task => (
+              <div key={task.key} className="flex items-center w-full max-w-[200px] sm:w-auto justify-start">
+                <input
+                  type="checkbox"
+                  id={`${task.key}-filter`}
+                  checked={filters[task.key as keyof typeof filters]}
+                  onChange={() => handleFilterChange(task.key as keyof typeof filters)}
+                  className="mr-2 h-4 w-4"
+                />
+                <label htmlFor={`${task.key}-filter`} className="text-gray-700">{task.label}</label>
+              </div>
+            ))}
           </div>
+            
+          <LeaderboardTable 
+            data={leaderboardData} 
+            sortBy={sortBy} 
+            sortDirection={sortDirection} 
+            filterColumns={activeFilterColumns} 
+            updateSortBy={handleUpdateSortBy}
+            updateSortDirection={handleUpdateSortDirection}
+          />
         </div>
       </section>
     </div>
