@@ -107,5 +107,11 @@ Tools were generally setup and evaluated using default settings, with "agent" mo
 Github Copilot was evaluated using a pre-release build in Visual Studio Code - Insiders, to enable the agent functionality.
 
 Agent and edit task patches were collected for all tools as of March 14th, 2025. Autocomplete evaluation was performed during the week of March 17th, 2025.
+
+amazon q - sometimes was unable to apply changes to the file (json) and would generate a markdown report outlining the changes. we counted those as failures, but it's possible it came up with the correct solution
 # Limitations
 The goal of LiveSWEBench is to remain at the forefront of agent development by integrating new tasks and improving evaluation methods over time. Most urgently, we plan to rework our inference and evaluation harnesses to better make use of containerization to ensure consistent evaluations. We also plan to re-evaluate agents in environments where dependencies are already installed to evaluate agents' ability to test their code prior to submission.
+
+# future stuff
+
+add more task types
