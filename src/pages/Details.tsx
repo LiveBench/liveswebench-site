@@ -1,7 +1,7 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import details from '../assets/details.md?raw';
+import report from '../assets/Report.md?raw';
 
 const Details = () => {
   return (
@@ -11,7 +11,7 @@ const Details = () => {
             <ReactMarkdown 
               remarkPlugins={[remarkGfm]} 
               rehypePlugins={[rehypeRaw]}>
-              {details}
+              {report}
             </ReactMarkdown>
           </article>
       </div>

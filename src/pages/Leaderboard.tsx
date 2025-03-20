@@ -154,6 +154,7 @@ const Leaderboard = () => {
             updateSortBy={handleUpdateSortBy}
             updateSortDirection={handleUpdateSortDirection}
           />
+          <p className="text-gray-700">*Github Copilot was evaluated using the agent mode, currently available only in pre-release in VSCode Insiders.</p>
         </div>
       </section>
     </div>

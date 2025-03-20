@@ -93,7 +93,7 @@ const LeaderboardTable = ({ data, sortBy, sortDirection, filterColumns, updateSo
                             className="cursor-pointer"
                         >
                             <div className="flex items-center justify-center">
-                                Global Average {getSortIndicator('global')}
+                                Average {getSortIndicator('global')}
                             </div>
                         </th>
                         {columns.map((column) => (
@@ -112,7 +112,7 @@ const LeaderboardTable = ({ data, sortBy, sortDirection, filterColumns, updateSo
                 <tbody>
                     {sortedData.map((item) => (
                         <tr key={item.tool.name}>
-                            <td className="sticky left-0 z-10 bg-white"><a href={item.tool.website} target="_blank" rel="noopener noreferrer" className="no-underline">{item.tool.name}</a></td>
+                            <td className="sticky left-0 z-10 bg-white"><a href={item.tool.website} target="_blank" rel="noopener noreferrer" className="no-underline">{item.tool.name}{item.tool.name == 'Github Copilot' ? '*' : ''}</a></td>
                             <td>{formatPercentage(globalAverage(columns.map((column) => item[column as keyof ToolScores] as number | null)))}</td>
                             {columns.map((column: typeof SCORE_COLUMNS[number]) => (
                                 <td key={column}>{item[column as keyof ToolScores] ? formatPercentage(item[column as keyof ToolScores] as number) : 'N/A'}</td>
