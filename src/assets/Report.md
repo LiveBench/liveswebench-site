@@ -368,7 +368,7 @@ Agent and edit task patches were collected for all tools as of March 14th, 2025.
 </figure>
 <div id="results_container" className="flex flex-col lg:flex-row gap-3 justify-center items-center w-full">
 <figure id="score_by_repo" className="flex flex-col items-center m-0 w-full">
-	<img src="/radar.png" alt="Task resolution rates by repository" width="100%" height="100%" className="object-contain"/>
+	<img src="/radar.png" alt="Task resolution rates by repository" width="100%" height="100%" className="object-contain lg:w-1/2 xxl:w-1/3"/>
 	<figcaption>Figure 2: A radar chart of task resolution rates by repository. Task types are overlaid on top of each other.</figcaption>
 </figure>
 </div>
