@@ -1,6 +1,6 @@
-import agentCsvData from '../assets/agent.csv?raw';
-import editCsvData from '../assets/edit.csv?raw';
-import autocompleteCsvData from '../assets/autocomplete.csv?raw';
+import agentCsvData from '../assets/agent_results.csv?raw';
+import editCsvData from '../assets/edit_results.csv?raw';
+import autocompleteCsvData from '../assets/autocomplete_results.csv?raw';
 import LeaderboardTable from '../components/LeaderboardTable';
 import { useState } from 'react';
 
