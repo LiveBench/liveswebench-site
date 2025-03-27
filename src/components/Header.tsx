@@ -27,6 +27,7 @@ const Header = () => {
             className="px-3 py-2 text-gray-700 hover:text-blue-600 no-underline"
             target="_blank" 
             rel="noopener noreferrer"
+            onClick={(e) => { e.preventDefault(); alert('Code release coming soon!'); }}
           >
             Code
           </a>

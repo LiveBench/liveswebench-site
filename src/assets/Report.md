@@ -13,7 +13,7 @@ Our tasks are sourced from issue-pull request pairs from five real-world Github 
 LiveSWEBench consists of 3 task types, each of which evaluates AI coding assistants at a different level of developer involvement:
 1. Fully agentic tasks, where assistants are given a real-world Github issue and asked to solve it entirely autonomously (similar to [SWE-Bench](https://www.swebench.com/))
 2. Targeted edit tasks, where assistants are told the name of a file to modify and given a more specific but still high-level prompt about the change to make
-3. Autocomplete tasks, where autocomplete assistants are very specifically prompted to generate code at a specific file location
+3. Autocomplete tasks, where autocomplete assistants are prompted to generate code at a specific file location
 
 These tasks were sourced using utilities from [SWE-Bench](https://www.swebench.com/) to find issue-merged pull request pairs from large, well-maintained Github repositories. Our tasks provide a comprehensive evaluation of coding assistants' performance in a variety of contexts. Specifically, our tasks are sourced from the following repositories:
 - [freeCodeCamp/freeCodeCamp](https://github.com/freeCodeCamp/freeCodeCamp) (JavaScript, TypeScript, React) - an open-source full-stack web development and machine learning curriculum and learning platform
@@ -108,12 +108,12 @@ While the underlying LM may remain the same, many frameworks have emerged for de
 
 [Table 1](#ai-coding-assistants) shows a sample of popular AI coding assistants and highlights which features each provides as well as its mode of operation (Integrated development environment (IDE) or command-line interface (CLI)). In general, command-line tools offer only fully agentic modes, while IDE-integration enables code autocomplete. More limited editing modes tend to be a stepping-stone to the development of fully agentic modes; for instance popular applications such as Cursor and Windsurf, which first developed the RAG-enabled edit modes, now default to their fully agentic modes. Because of this, and to ensure fairness when comparing to pure agent tools, we opted to use agent modes for evaluation of the targeted edits task.
 ## AI Benchmarking
-A variety of evaluations have been developed to evaluate language models both on general-purpose capabilities and specifically on code generation ability. Benchmarks exist to evaluate LMs on reasoning, language understanding, math skills, and instruction following using diverse sets of tasks. For AI agents specifically, benchmarks have been developed to evaluate tool use capabilities and computer control.
+A variety of evaluations have been developed to evaluate language models both on general-purpose capabilities and specifically on code generation ability. Benchmarks exist to evaluate LMs on reasoning, language understanding, math skills, and instruction following using diverse sets of tasks. For AI agents specifically, benchmarks have been developed to evaluate tool use capabilities and computer control (e.g. [OSWorld](https://os-world.github.io/)).
 More specific benchmarks also exist for LM code generation. [HumanEval](https://arxiv.org/abs/2107.03374) and [LiveCodeBench](https://arxiv.org/abs/2403.07974) have become standard evaluations for isolated code generation tasks. [Aider's polyglot benchmark](https://aider.chat/docs/leaderboards/) evaluates code-writing ability in multiple programming languages. SWE-Bench is the current standard evaluation for code writing in large, real-world repositories using agentic functionality. However, no existing benchmark evaluates AI coding assistants at varying levels of developing involvement in a variety of language and framework environments. In addition, no major benchmarks exist for AI autocomplete tools. LiveSWEBench therefore greatly extends the scope of evaluation compared to existing benchmarks and provides a more comprehensive view of agents' capabilities.
 
 # Task Details
 ## Task Collection and Validation
-Our task collection and validation process was inspired heavily by that of [SWE-Bench](https://www.swebench.com/). Tasks are constructed from issue-pull request (PR) pairs from real-world, widely used Github repositories with permissive licenses. We focus on widely used repositories to ensure that extensive documentation is likely present, robust unit test suites have been implemented, and code is sensibly organized and formatted. We do not, however, restrict to only Python codebases; instead, we include a diverse set of languages and frameworks such as C++, Java, Typescript, and Python. We filter by PRs where unit tests were modified, with the assumption that such tests were added or updated specifically to evaluate the success of the code in the PR in solving the issue. We also filtered by PRs from the past year to reduce the risk of contamination. GitHub scraping and processing utilities were adapted from the SWE-Bench codebase.
+Our task collection and validation process was inspired heavily by that of [SWE-Bench](https://www.swebench.com/). Tasks are constructed from issue-pull request (PR) pairs from real-world, widely used Github repositories with permissive licenses. We focus on widely used repositories to ensure that extensive documentation is likely present, robust unit test suites have been implemented, and code is sensibly organized and formatted. We do not, however, restrict to only Python codebases; instead, we include a diverse set of languages and frameworks such as C++, Java, Typescript, and Python. We filter by PRs where unit tests were modified, with the assumption that such tests were added or updated specifically to evaluate the success of the code in the PR in solving the issue. We also filtered by PRs from the past year to reduce the risk of contamination. GitHub scraping and processing utilities were adapted from the [SWE-Bench codebase](https://github.com/swe-bench/SWE-bench/blob/main/assets/collection.md).
 
 The extraction process provides us with the following items:
 - The problem statement, the text of the original Github issue and comments made before the first PR commit
@@ -125,177 +125,209 @@ In all three task types, the overall goal is to use the AI assistant to reconstr
 
 We apply the system of execution-based validation developed by SWE-Bench. Task instances were validated by running the repository test suite three times: first, with no changes applied, as a baseline; second, with only the test patch changes applied, as another baseline; and finally, with the test and gold patch changes applied, to validate the feasibility of the task. Manual inspection pruned infeasible tasks, where tests could not be run or there were not tests that switched from fail to pass when the gold patch was applied. This validation process left us with 53 agent tasks.
 
-<div id="task_stats_container" className="flex flex-col lg:flex-row gap-3 justify-center items-center w-full">
+<div id="task_stats_container" className="flex flex-col xl:flex-row gap-3 justify-center items-center w-full">
 <figure id="repo_stats">
 	<div className="overflow-x-auto w-full">
 	<table className="overflow-x-auto">
-		<tr>
-			<th>Name</th>
-			<th># Agent Tasks</th>
-			<th># Edit Tasks</th>
-			<th># Autocomplete Tasks</th>
-		</tr>
-		<tr>
-			<td>freeCodeCamp</td>
-			<td>12</td>
-			<td>12</td>
-			<td>10</td>
-		</tr>
-		<tr>
-			<td>torchtune</td>
-			<td>11</td>
-			<td>7</td>
-			<td>7</td>
-		</tr>
-		<tr>
-			<td>wagtail</td>
-			<td>11</td>
-			<td>9</td>
-			<td>11</td>
-		</tr>
-		<tr>
-			<td>junit5</td>
-			<td>11</td>
-			<td>9</td>
-			<td>11</td>
-		</tr>
-		<tr>
-			<td>json</td>
-			<td>8</td>
-			<td>6</td>
-			<td>8</td>
-		</tr>
-	</table>
+    <thead>
+        <tr>
+            <th>Repo</th>
+            <th># Agent</th>
+            <th># Edit</th>
+            <th># Prompted Autocomplete</th>
+            <th># Inline Autocomplete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>freeCodeCamp</td>
+            <td>12</td>
+            <td>9</td>
+            <td>10</td>
+            <td>8</td>
+        </tr>
+        <tr>
+            <td>torchtune</td>
+            <td>11</td>
+            <td>7</td>
+            <td>7</td>
+            <td>5</td>
+        </tr>
+        <tr>
+            <td>json</td>
+            <td>8</td>
+            <td>8</td>
+            <td>6</td>
+            <td>6</td>
+        </tr>
+        <tr>
+            <td>wagtail</td>
+            <td>11</td>
+            <td>9</td>
+            <td>9</td>
+            <td>5</td>
+        </tr>
+        <tr>
+            <td>junit5</td>
+            <td>11</td>
+            <td>11</td>
+            <td>9</td>
+            <td>5</td>
+        </tr>
+    </tbody>
+</table>
 	</div>
 	<figcaption>Table 2: The number of task instances of each type for each repository.</figcaption>
 </figure>
 <figure id="task_stats" className="m-0 w-full">
 	<div className="overflow-x-auto w-full">
 	<table className="overflow-x-auto w-full">
-		<thead>
-			<tr>
-			<th></th>
-			<th></th>
-			<th>Minimum</th>
-			<th>Median</th>
-			<th>Mean</th>
-			<th>Maximum</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-			<td rowspan="4">Agent</td>
-			<td># Lines Changed</td>
-			<td>2</td>
-			<td>34</td>
-			<td>157.02</td>
-			<td>4644</td>
-			</tr>
-			<tr>
-			<td># Files Changed</td>
-			<td>1</td>
-			<td>3</td>
-			<td>22.83</td>
-			<td>973</td>
-			</tr>
-			<tr>
-			<td>Prompt Length (characters)</td>
-			<td>93</td>
-			<td>1610</td>
-			<td>2506.15</td>
-			<td>21521</td>
-			</tr>
-			<tr>
-			<td># Edit Locations</td>
-			<td>2</td>
-			<td>6</td>
-			<td>39.43</td>
-			<td>1670</td>
-			</tr>
-			<tr>
-			<td rowspan="4">Edit</td>
-			<td># Lines Changed</td>
-			<td>1</td>
-			<td>10</td>
-			<td>20.37</td>
-			<td>137</td>
-			</tr>
-			<tr>
-			<td># Other files in gold</td>
-			<td>0</td>
-			<td>2</td>
-			<td>23.24</td>
-			<td>972</td>
-			</tr>
-			<tr>
-			<td>Prompt Length (characters)</td>
-			<td>37</td>
-			<td>130</td>
-			<td>144.98</td>
-			<td>322</td>
-			</tr>
-			<tr>
-			<td># Edit Locations</td>
-			<td>1</td>
-			<td>2</td>
-			<td>2.39</td>
-			<td>4</td>
-			</tr>
-			<tr>
-			<td rowspan="5">Autocomplete</td>
-			<td># Hunks</td>
-			<td>1</td>
-			<td>2</td>
-			<td>3.27</td>
-			<td>16</td>
-			</tr>
-			<tr>
-			<td># Additions Per Hunk</td>
-			<td>1</td>
-			<td>1</td>
-			<td>2.3</td>
-			<td>8</td>
-			</tr>
-			<tr>
-			<td># Files Modified</td>
-			<td>1</td>
-			<td>1</td>
-			<td>1.9</td>
-			<td>8</td>
-			</tr>
-			<tr>
-			<td>Prompt Length (characters)</td>
-			<td>145</td>
-			<td>312.71</td>
-			<td>354.74</td>
-			<td>1242</td>
-			</tr>
-			<tr>
-			<td># Edit Locations</td>
-			<td>1</td>
-			<td>2</td>
-			<td>4.07</td>
-			<td>22</td>
-			</tr>
-			<tr>
-			<td rowspan="2">Codebase</td>
-			<td># Non-test code files</td>
-			<td>261</td>
-			<td>1516</td>
-			<td>1552.4</td>
-			<td>3867</td>
-			</tr>
-			<tr>
-			<td># Non-test code lines</td>
-			<td>52386</td>
-			<td>130097</td>
-			<td>208477.2</td>
-			<td>493985</td>
-			</tr>
-		</tbody>
-	</table>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th>Minimum</th>
+      <th>Median</th>
+      <th>Mean</th>
+      <th>Maximum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="4">Agent</td>
+      <td># Lines Changed</td>
+      <td>2</td>
+      <td>34</td>
+      <td>157.02</td>
+      <td>4644</td>
+    </tr>
+    <tr>
+      <td># Files Changed</td>
+      <td>1</td>
+      <td>3</td>
+      <td>22.83</td>
+      <td>973</td>
+    </tr>
+    <tr>
+      <td>Prompt Length (characters)</td>
+      <td>93</td>
+      <td>1610</td>
+      <td>2506.15</td>
+      <td>21521</td>
+    </tr>
+    <tr>
+      <td># Edit Locations</td>
+      <td>2</td>
+      <td>6</td>
+      <td>39.43</td>
+      <td>1670</td>
+    </tr>
+    <tr>
+      <td rowspan="4">Edit</td>
+      <td># Lines Changed</td>
+      <td>1</td>
+      <td>10</td>
+      <td>20.37</td>
+      <td>137</td>
+    </tr>
+    <tr>
+      <td># Other files in gold</td>
+      <td>0</td>
+      <td>2</td>
+      <td>23.24</td>
+      <td>972</td>
+    </tr>
+    <tr>
+      <td>Prompt Length (characters)</td>
+      <td>37</td>
+      <td>130</td>
+      <td>144.98</td>
+      <td>322</td>
+    </tr>
+    <tr>
+      <td># Edit Locations</td>
+      <td>1</td>
+      <td>2</td>
+      <td>2.39</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td rowspan="5">Prompted Autocomplete</td>
+      <td># Hunks</td>
+      <td>1</td>
+      <td>2</td>
+      <td>3.27</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td># Additions Per Hunk</td>
+      <td>1</td>
+      <td>1</td>
+      <td>2.3</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td># Files Modified</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1.9</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>Prompt Length (characters)</td>
+      <td>145</td>
+      <td>312.71</td>
+      <td>354.74</td>
+      <td>1242</td>
+    </tr>
+    <tr>
+      <td># Edit Locations</td>
+      <td>1</td>
+      <td>2</td>
+      <td>4.07</td>
+      <td>22</td>
+    </tr>
+    <tr>
+      <td rowspan="3">Inline Autocomplete</td>
+      <td># Hunks</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1.93</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td># Additions Per Hunk</td>
+      <td>1</td>
+      <td>2</td>
+      <td>2.9</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td># Edit Locations</td>
+      <td>1</td>
+      <td>2</td>
+      <td>2.14</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td rowspan="2">Codebase</td>
+      <td># Non-test code files</td>
+      <td>261</td>
+      <td>1516</td>
+      <td>1552.4</td>
+      <td>3867</td>
+    </tr>
+    <tr>
+      <td># Non-test code lines</td>
+      <td>52386</td>
+      <td>130097</td>
+      <td>208477.2</td>
+      <td>493985</td>
+    </tr>
+  </tbody>
+</table>
 	</div>
-	<figcaption>Table 3: Statistics for each task type, including the minimum, median, mean, and maximum values for various metrics. Edit locations are defined by the function/class/etc name shown in patch hunk headers.</figcaption>
+	<figcaption>Table 3: Statistics for each task type, including the minimum, median, mean, and maximum values for various metrics. Edit locations are defined by the function/class/etc name shown in patch hunk headers. One major outlier (freeCodeCamp - 55444) was excluded from these statistics for agent and edit tasks.</figcaption>
 </figure>
 </div>
 
@@ -326,7 +358,7 @@ The inference process is as follows:
 ### Targeted Edits Task
 The targeted editing task evaluates the ability of the assistant to generate code changes when given a specific edit prompt in a single file. This simulates a common use case for AI assistants (especially prior to the development of agentic functionality) wherein a developer, working on a broader issue, can summarize the needed local changes into a prompt for the assistant. The prompts for this task are more similar to what would be included in a pull request description: a high level, few sentence explanation of the changes. The assistant is instructed with the name of the file to edit; however, it is not told the names of other files that may be relevant for understanding the prompt or generating the edits. This task therefore still relies on some level of agentic capability or integration of broader repository context into the prompt.
 
-Task instances for this category were extracted from the agentic tasks. More specifically, we selected one file from each task's gold patch where the changes to that file could reasonably be summarized in a few sentences. We filtered for files containing actual code changes; i.e. not only changes to imports or documentation. From the original 53 task instances, our filtering left us with 49 edit task instances. We then used an LM (Claude 3.5 Sonnet) to concisely summarize the changes made to the edit file. In fact, many agent task instances had multiple files that could qualify as edit tasks. In the future, we may expand this task category to include all possible task instances.
+Task instances for this category were extracted from the agentic tasks. More specifically, we selected one file from each task's gold patch where the changes to that file could reasonably be summarized in a few sentences. We filtered for files containing actual code changes; i.e. not only changes to imports or documentation. From the original 53 task instances, our filtering left us with 49 edit task instances. We then used an LM ([Claude 3.5 Sonnet](https://www.anthropic.com/news/3-5-models-and-computer-use)) to concisely summarize the changes made to the edit file. In fact, many agent task instances had multiple files that could qualify as edit tasks. In the future, we may expand this task category to include all possible task instances.
 
 The inference process for this task type is in general very similar to that of the agentic task, the main difference being the more specific prompt and the inclusion of the edit file name as context:
 
@@ -338,20 +370,28 @@ The inference process for this task type is in general very similar to that of t
 5. Revert the application of the gold patch and generate a solution patch file using `git diff`
 During evaluation, the partial gold patch is applied prior to applying the agent's solution patch (i.e. prior to [step 4](#task-evaluation)).
 ### Autocomplete Task
-The autocomplete task evaluates the utility of inline completions in making small-scale changes to repository code. The difficulty of this task comes from the dependence of the changes on code from the rest of the current file or other files in the repository. This task simulates the most involved form of AI-assisted development, where a developer's code-writing ability is directly supplemented by the completion suggestions.
+The autocomplete task evaluates the utility of inline completions in making small-scale changes to repository code. The difficulty of this task comes from the dependence of the changes on code from the rest of the current file or other files in the repository. This task simulates the most involved form of AI-assisted development, where a developer's code-writing ability is directly supplemented by the completion suggestions. We evaluate autocomplete in two modalities: prompted, where a natural-language prompt is placed as a comment in the line above where the code should be generated; and inline, where a portion of a line of code itself is pasted and the assistant must complete it. This provides us with a comprehensive understanding of each tool's capabilities.
 
-Task instances for this category were similarly extracted as the edit tasks, the major difference being the localization of changes to individual patch hunks rather than entire files. Specifically, patch hunks were filtered to remove any that did not include code changes, had non-contiguous additions, or more than 8 line additions, leaving only sets of few-line changes. Each hunk was then passed into an LM (Claude 3.5 Sonnet) to generate a specific description of the changes. Hunks and their prompts from the same original task were then grouped back together to create the task instances. This process left us with 41 autocomplete tasks with a total of 135 hunks to complete.
+Task instances for this category were similarly extracted as the edit tasks, the major difference being the localization of changes to individual patch hunks rather than entire files. Specifically, patch hunks were filtered to remove any that did not include code changes, had non-contiguous additions, or more than 8 line additions, leaving only sets of few-line changes. 
+
+For the prompted tasks, each hunk was then passed into an LM (Claude 3.5 Sonnet) to generate a specific description of the changes. Hunks and their prompts from the same original task were then grouped back together to create the task instances. This process left us with 41 prompted autocomplete tasks with a total of 128 hunks to complete.
+
+For the inline tasks, we filtered further to restrict the scope of modifications to just a few hunks (at most) within one file. We kept only hunks where we judged the changes to be feasible to reproduce given no information aside from variable and function names (and the broader context of the current file and other files in the codebase). For instance, we filtered out hunks that contained additions or modifications to string values like error messages, as there is no reasonable chance of an autocomplete model predicting the correct value. Grouping together by task left us with 29 inline autocomplete tasks with a total of 56 hunks to complete.
 
 The inference process is as follows:
 
 1. Setup the repository in baseline state
 2. Apply the gold patch, aside from the hunks to be completed
+	1. We additionally apply a "removal" patch, containing only the removals from the hunks to be completed, so that they do not influence the autocomplete model's predictions.
 3. Activate the tool and open the relevant files
-4. For each hunk to be completed:
+4. (Prompted Tasks) For each hunk to be completed:
 	1. Copy the generated autocomplete prompt and paste it as a comment in the line prior to where the additions should be
 	2. Press enter and tab until suggestions appear
 	3. While there are still still completion suggestions (up to a maximum of 5 acceptances), press tab to accept each suggestion and then enter to move to the next line
-5. Once all hunks have been processed, revert the gold patch application and generate the solution patch
+5. (Inline Tasks) For each hunk to be completed, for each statement (e.g. variable assignment, function declaration, method call, conditional) addition from the gold patch:
+	1. Copy the beginning of the statement (e.g. up to the equals sign, first opening parenthesis, period, or bracket) and paste it at the correct line
+	2. Press tab to accept suggestions until there are no more
+6. Once all hunks have been processed, revert the gold patch application and generate the solution patch
 During evaluation, the gold patch (stripped of the autocomplete hunks) is applied prior to applying the solution patch.
 
 In some cases, autocomplete models get stuck in loops of generating the same suggestions repeatedly. When this occurred, we kept only the first repetition of the suggestions.
@@ -360,16 +400,17 @@ Tools were generally setup and evaluated using default settings, with "agent" mo
 
 Github Copilot was evaluated using a pre-release build in Visual Studio Code - Insiders, to enable the agent functionality. The autocomplete model was left as the default; in the future, we may re-evaluate this task using the newer GPT-4O autocomplete preview.
 
-Agent and edit task patches were collected for all tools as of March 14th, 2025. Autocomplete evaluation was performed during the week of March 17th, 2025.
+Agent and edit task patches were collected for all tools as of March 14th, 2025. Prompted autocomplete evaluation was performed during the week of March 17th, 2025. Inline autocomplete evaluation was performed during the week of March 24th, 2025.
 # Results and Discussion
+
+<div id="results_container" className="flex flex-col lg:flex-row gap-3 justify-center items-center w-full">
 <figure id="full_results_graph" className="flex flex-col items-center m-0 w-full">
-	<img src="/full_graph.png" alt="Resolution scores by tool and task type" width="100%" height="100%" className="object-contain lg:w-1/2 xxl:w-1/3"/>
+	<img src="/full_graph.png" alt="Resolution scores by tool and task type" width="100%" height="100%" className="object-contain"/>
 	<figcaption>Figure 1: A graph of resolution scores for each evaluated tool, split among the three task types</figcaption>
 </figure>
-<div id="results_container" className="flex flex-col lg:flex-row gap-3 justify-center items-center w-full">
 <figure id="score_by_repo" className="flex flex-col items-center m-0 w-full">
-	<img src="/radar.png" alt="Task resolution rates by repository" width="100%" height="100%" className="object-contain lg:w-1/2 xxl:w-1/3"/>
-	<figcaption>Figure 2: A radar chart of task resolution rates by repository. Task types are overlaid on top of each other.</figcaption>
+	<img src="/radar_agent_and_edit.png" alt="Task resolution rates by repository" width="100%" height="100%" className="object-contain"/>
+	<figcaption>Figure 2: A radar chart of task resolution rates by repository for the agent and edit tasks. Task types are overlaid on top of each other.</figcaption>
 </figure>
 </div>
 
@@ -379,10 +420,24 @@ Agent and edit task patches were collected for all tools as of March 14th, 2025.
 
 It is interesting to analyze the degree of improvement between the agent and edit tasks is not consistent among the tools. While the top six agent scores are within a few percent of each other, the edit task results had greater variance. The general equality among assistants for the agent task is likely attributable to the same model being used and (in general) the same tools being provided as part of the agent framework, e.g. read file, edit file, search directory, run bash command. When given complete autonomy and a detailed, high-level description of the task, it seems the raw model intelligence may be the most important factor. Since the agent task provides no hints as to where changes need to be made, exploration of the codebase is also a given. The edit task's specification of the file to be edited may appear to make this task much easier, but the changes needed may still depend on context from other files. It's likely that the agents who saw less improvement between the agent and edit tasks were less likely to still explore the codebase when prompted with the specific edit file; in contrast, Aider, which always automatically explores to generate a repository map at the beginning of execution, saw the greatest improvement of all between the agent and edit tasks. The edit task also does not directly inform the agent of recent changes made to the codebase as part of the partially applied PR. Future work could investigate the impact of the context and information directly provided as part of the edit task prompt. Overall, we see that only Aider and OpenHands had universally improved performance between the agent and edit tasks, though other agents tended to only perform worse in one repository for the edit task.
 
-The autocomplete task proved more difficult than expected. Most likely, this difficulty comes from the generally lower intelligence capacity of autocomplete models, as they are much more optimized for speed of generations. We found that the largest challenge for the autocomplete task was knowing when to stop; in many cases, the first few suggestions from the model would constitute a complete and correct solution, but the model would go on to suggest additional breaking code that would result in task failure.
+<div id="autocomplete_results_container" className="flex flex-col lg:flex-row gap-3 justify-center items-center w-full">
+<figure id="autocomplete_by_repo" className="flex flex-col items-center m-0 lg:w-150 xl:w-200">
+	<img src="/radar_autocomplete.png" alt="Task resolution rates by repository" width="100%" height="100%" className="object-contain"/>
+	<figcaption>Figure 2: A radar chart of task resolution rates by repository for the autocomplete tasks. Task types are overlaid on top of each other.</figcaption>
+</figure>
 
-Our autocomplete evaluation is purely an evaluation of the underlying model used. The task format does not engage with certain additional features often included as part of autocomplete functionality, such as next edit prediction, where a tool may save time by predicting future edits in other parts of the same file. The constrained nature of this autocomplete task means its results are not a fully representative view of the average developer experience of using these tools. A survey measuring actual keystroke reduction as developers complete tasks using different autocomplete tools could be an illuminating additional view of the state of AI autocomplete.
+</div>
+
+Both variants of the autocomplete task proved more difficult than expected. Most likely, this difficulty comes from the generally lower intelligence capacity of autocomplete models, as they are much more optimized for speed of generations. We found that the largest challenge for the autocomplete task was knowing when to stop; in many cases, the first few suggestions from the model would constitute a complete and correct solution, but the model would go on to suggest additional breaking code that would result in task failure. Autocomplete models additionally produced code that failed to compile or had errors aside from just test failures.
+
+Our autocomplete task formats do not engage with certain additional features often included as part of autocomplete functionality, such as next edit prediction, where a tool may save time by predicting future edits in other parts of the same file. The constrained nature of this autocomplete task means its results are not a fully representative view of the average developer experience of using these tools. A survey measuring actual keystroke reduction as developers complete tasks using different autocomplete tools could be an illuminating additional view of the state of AI autocomplete.
 
 # Limitations and Future Work
 
-The goal of LiveSWEBench is to remain at the forefront of agent development by integrating new tasks and improving evaluation methods over time. Most urgently, we plan to rework our inference and evaluation harnesses to better make use of containerization to ensure consistent evaluations. We also plan to re-evaluate agents in environments where dependencies are already installed to evaluate agents' ability to test their code prior to submission. Finally, we wish to expand LiveSWEBench to encompass additional task types, such as greenfield project setup and frontend code generation based on design screenshots.
+The goal of LiveSWEBench is to remain at the forefront of agent development by integrating new tasks and improving evaluation methods over time. Most urgently, we plan to rework our inference and evaluation harnesses to better make use of containerization to ensure consistent evaluations. We also plan to re-evaluate agents in environments where dependencies are already installed to evaluate agents' ability to test their code prior to submission. 
+
+It was clear during our evaluation that certain tools are more efficient than others in their tool calls and planning processes. LiveSWEBench currently does not report usage or pricing information, but we may incorporate it in a future version of the benchmark to add an additional resource for developers choosing between tools.
+
+Our testing framework operates purely quantitatively based on the unit tests from each repository. This means that code quality is not checked for other issues such as code smells, which may hinder maintainability of the codebase. An evaluation of the qualitative quality of generated code would be a useful determinant for which tool is the most capable.
+
+Finally, we wish to expand LiveSWEBench to encompass additional task types, such as greenfield project setup and frontend code generation based on design screenshots.

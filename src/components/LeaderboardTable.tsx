@@ -5,10 +5,11 @@ type ToolScores = {
     }
     agent: number | null;
     edit: number | null;
-    autocomplete: number | null;
+    prompted_autocomplete: number | null;
+    inline_autocomplete: number | null;
 }
 
-const SCORE_COLUMNS = ['agent', 'edit', 'autocomplete'];
+const SCORE_COLUMNS = ['agent', 'edit', 'prompted_autocomplete', 'inline_autocomplete'];
 
 const globalAverage = (scores: (number | null)[]) => {
     const validScores = scores.filter((score) => score !== null);
@@ -103,7 +104,7 @@ const LeaderboardTable = ({ data, sortBy, sortDirection, filterColumns, updateSo
                                 onClick={() => handleColumnClick(column)}
                             >
                                 <div className="flex items-center justify-center">
-                                    {column} % Resolved {getSortIndicator(column)}
+                                    {column.replace('_', ' ')} % Resolved {getSortIndicator(column)}
                                 </div>
                             </th>
                         ))}

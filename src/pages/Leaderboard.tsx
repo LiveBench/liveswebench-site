@@ -1,6 +1,7 @@
 import agentCsvData from '../assets/agent_results.csv?raw';
 import editCsvData from '../assets/edit_results.csv?raw';
-import autocompleteCsvData from '../assets/autocomplete_results.csv?raw';
+import promptedAutocompleteCsvData from '../assets/prompted_autocomplete_results.csv?raw';
+import inlineAutocompleteCsvData from '../assets/inline_autocomplete_results.csv?raw';
 import LeaderboardTable from '../components/LeaderboardTable';
 import { useState } from 'react';
 
@@ -10,14 +11,16 @@ const Leaderboard = () => {
   const [filters, setFilters] = useState({
     agent: true,
     edit: true,
-    autocomplete: true
+    prompted_autocomplete: true,
+    inline_autocomplete: true
   });
 
   // Define task types
   const taskTypes = [
     { key: 'agent', label: 'Agentic Programming' },
     { key: 'edit', label: 'Targeted Editing' },
-    { key: 'autocomplete', label: 'Autocompletion' }
+    { key: 'prompted_autocomplete', label: 'Prompted Autocomplete' },
+    { key: 'inline_autocomplete', label: 'Inline Autocomplete' }
   ];
 
   // Tool mapping for website links
@@ -47,20 +50,23 @@ const Leaderboard = () => {
 
   const agentData = parseCSV(agentCsvData);
   const editData = parseCSV(editCsvData);
-  const autocompleteData = parseCSV(autocompleteCsvData);
+  const promptedAutocompleteData = parseCSV(promptedAutocompleteCsvData);
+  const inlineAutocompleteData = parseCSV(inlineAutocompleteCsvData);
 
   // Generate leaderboard data
   const generateLeaderboardData = () => {
     const allTools = new Set([
       ...agentData.map((item) => item.Tool),
       ...editData.map((item) => item.Tool),
-      ...autocompleteData.map((item) => item.Tool),
+      ...promptedAutocompleteData.map((item) => item.Tool),
+      ...inlineAutocompleteData.map((item) => item.Tool),
     ]);
 
     const leaderboardData = Array.from(allTools).map((tool) => {
       const agentScore = agentData.find((item) => item.Tool === tool)?.Score || null;
       const editScore = editData.find((item) => item.Tool === tool)?.Score || null;
-      const autocompleteScore = autocompleteData.find((item) => item.Tool === tool)?.Score || null;
+      const promptedAutocompleteScore = promptedAutocompleteData.find((item) => item.Tool === tool)?.Score || null;
+      const inlineAutocompleteScore = inlineAutocompleteData.find((item) => item.Tool === tool)?.Score || null;
 
       return {
         tool: {
@@ -69,7 +75,8 @@ const Leaderboard = () => {
         },
         agent: agentScore,
         edit: editScore,
-        autocomplete: autocompleteScore,
+        prompted_autocomplete: promptedAutocompleteScore,
+        inline_autocomplete: inlineAutocompleteScore,
       };
     });
 
@@ -119,7 +126,7 @@ const Leaderboard = () => {
           <ul>
             <li>Agentic Programming, where the assistant is given a high-level task and must complete it fully autonomously.</li>
             <li>Targeted editing, where the assistant is given a more direct instruction and file to edit.</li>
-            <li>Autocompletion, where the assistant generates inline completions for a specific prompt.</li>
+            <li>Autocompletion, including both prompted completions (filling in code snippets) and inline completions (generating code as you type).</li>
           </ul>
           <p className="text-gray-700">
             Our task collection and evaluation framework is heavily inspired by that of <a className="text-blue-600" href="https://www.swebench.com/">SWE-Bench</a>.
