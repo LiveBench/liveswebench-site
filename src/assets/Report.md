@@ -126,9 +126,9 @@ In all three task types, the overall goal is to use the AI assistant to reconstr
 We apply the system of execution-based validation developed by SWE-Bench. Task instances were validated by running the repository test suite three times: first, with no changes applied, as a baseline; second, with only the test patch changes applied, as another baseline; and finally, with the test and gold patch changes applied, to validate the feasibility of the task. Manual inspection pruned infeasible tasks, where tests could not be run or there were not tests that switched from fail to pass when the gold patch was applied. This validation process left us with 53 agent tasks.
 
 <div id="task_stats_container" className="flex flex-col xl:flex-row gap-3 justify-center items-center w-full">
-<figure id="repo_stats">
+<figure id="repo_stats" className="m-0 w-full">
 	<div className="overflow-x-auto w-full">
-	<table className="overflow-x-auto">
+	<table className="overflow-x-auto w-full">
     <thead>
         <tr>
             <th>Repo</th>

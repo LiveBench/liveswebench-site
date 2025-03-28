@@ -11,8 +11,8 @@ const Leaderboard = () => {
   const [filters, setFilters] = useState({
     agent: true,
     edit: true,
-    prompted_autocomplete: true,
-    inline_autocomplete: true
+    prompted_autocomplete: false,
+    inline_autocomplete: false
   });
 
   // Define task types
@@ -107,8 +107,8 @@ const Leaderboard = () => {
     .map(([column]) => column);
 
   return (
-    <div className="mx-auto px-8 py-8">
-      <section className="mb-12">
+    <div className="mx-auto md:px-8 py-8">
+      <section className="mb-6">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-3xl font-bold mb-6 text-center">About</h2>
           <p className="text-gray-700 mb-3">
@@ -125,17 +125,20 @@ const Leaderboard = () => {
           </p>
           <ul>
             <li>Agentic Programming, where the assistant is given a high-level task and must complete it fully autonomously.</li>
-            <li>Targeted editing, where the assistant is given a more direct instruction and file to edit.</li>
+            <li>Targeted editing, where the assistant is given a more direct instruction and file to edit (still operating as an agent).</li>
             <li>Autocompletion, including both prompted completions (filling in code snippets) and inline completions (generating code as you type).</li>
           </ul>
           <p className="text-gray-700">
             Our task collection and evaluation framework is heavily inspired by that of <a className="text-blue-600" href="https://www.swebench.com/">SWE-Bench</a>.
           </p>
+          <p className="text-gray-700">
+            We plan to evaluate release new tasks and evaluate more tools regularly to keep up with the latest developments and ensure the benchmark remains contamination-free.
+          </p>
         </div>
       </section>
 
       <section>
-        <div className="bg-white rounded-lg shadow-md p-6 overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md p-4 md:p-6 overflow-hidden">
           <h2 className="text-3xl font-bold mb-6 text-center">Leaderboard</h2>
           
           <div className="flex flex-col sm:flex-row justify-center items-center mb-4 sm:space-x-6">
@@ -161,7 +164,8 @@ const Leaderboard = () => {
             updateSortBy={handleUpdateSortBy}
             updateSortDirection={handleUpdateSortDirection}
           />
-          <p className="text-gray-700">*Github Copilot was evaluated using the agent mode, currently available only in pre-release in VSCode Insiders.</p>
+          <p className="text-gray-700">*Github Copilot was evaluated using the pre-release in VSCode Insiders to enable the agent mode.</p>
+          <p className="text-gray-700">Aside from Amazon Q, all tools were evaluated using Claude 3.7 Sonnet as the LLM.</p>
         </div>
       </section>
     </div>

@@ -5,8 +5,8 @@ import report from '../assets/Report.md?raw';
 
 const Details = () => {
   return (
-    <div className="mx-auto px-8 py-8">
-      <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="mx-auto md:px-8 py-8">
+      <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
         <article>
             <ReactMarkdown 
               remarkPlugins={[remarkGfm]} 
