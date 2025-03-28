@@ -5,11 +5,10 @@ type ToolScores = {
     }
     agent: number | null;
     edit: number | null;
-    prompted_autocomplete: number | null;
-    inline_autocomplete: number | null;
+    autocomplete: number | null;
 }
 
-const SCORE_COLUMNS = ['agent', 'edit', 'prompted_autocomplete', 'inline_autocomplete'];
+const SCORE_COLUMNS = ['agent', 'edit', 'autocomplete'];
 
 const globalAverage = (scores: (number | null)[]) => {
     const validScores = scores.filter((score) => score !== null);
@@ -77,51 +76,53 @@ const LeaderboardTable = ({ data, sortBy, sortDirection, filterColumns, updateSo
     };
     
     return (
-        <div className="overflow-x-auto max-h-[80vh] relative">
-            <table className="text-center w-full border-collapse">
-                <thead className="sticky top-0 z-10 bg-white">
-                    <tr>
-                        <th 
-                            onClick={() => handleColumnClick('name')}
-                            className="cursor-pointer sticky left-0 z-20 bg-white"
-                        >
-                            <div className="flex items-center justify-center">
-                                Tool {getSortIndicator('name')}
-                            </div>
-                        </th>
-                        <th 
-                            onClick={() => handleColumnClick('global')}
-                            className="cursor-pointer"
-                        >
-                            <div className="flex items-center justify-center">
-                                Average {getSortIndicator('global')}
-                            </div>
-                        </th>
-                        {columns.map((column) => (
+        <div className="overflow-x-hidden max-h-[80vh] w-full">
+            <div className="overflow-x-auto">
+                <table className="text-center border-collapse table-auto">
+                    <thead className="sticky top-0 z-10 bg-white">
+                        <tr>
                             <th 
-                                key={column} 
-                                className="capitalize cursor-pointer"
-                                onClick={() => handleColumnClick(column)}
+                                onClick={() => handleColumnClick('name')}
+                                className="cursor-pointer sticky left-0 z-20 bg-white px-3 hover:bg-gray-100"
                             >
                                 <div className="flex items-center justify-center">
-                                    {column.replace('_', ' ')} % Resolved {getSortIndicator(column)}
+                                    Tool {getSortIndicator('name')}
                                 </div>
                             </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedData.map((item) => (
-                        <tr key={item.tool.name}>
-                            <td className="sticky left-0 z-10 bg-white"><a href={item.tool.website} target="_blank" rel="noopener noreferrer" className="no-underline">{item.tool.name}{item.tool.name == 'Github Copilot' ? '*' : ''}</a></td>
-                            <td>{formatPercentage(globalAverage(columns.map((column) => item[column as keyof ToolScores] as number | null)))}</td>
-                            {columns.map((column: typeof SCORE_COLUMNS[number]) => (
-                                <td key={column}>{item[column as keyof ToolScores] ? formatPercentage(item[column as keyof ToolScores] as number) : 'N/A'}</td>
+                            <th 
+                                onClick={() => handleColumnClick('global')}
+                                className="cursor-pointer px-3 hover:bg-gray-100"
+                            >
+                                <div className="flex items-center justify-center">
+                                    Average {getSortIndicator('global')}
+                                </div>
+                            </th>
+                            {columns.map((column) => (
+                                <th 
+                                    key={column} 
+                                    className="capitalize cursor-pointer px-3 hover:bg-gray-100"
+                                    onClick={() => handleColumnClick(column)}
+                                >
+                                    <div className="flex items-center justify-center px-2">
+                                        {column.replace('_', ' ')} % Resolved {getSortIndicator(column)}
+                                    </div>
+                                </th>
                             ))}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {sortedData.map((item) => (
+                            <tr key={item.tool.name}>
+                                <td className="sticky left-0 z-10 bg-white px-2"><a href={item.tool.website} target="_blank" rel="noopener noreferrer" className="no-underline">{item.tool.name}{item.tool.name == 'Github Copilot' ? '*' : ''}</a></td>
+                                <td className="px-2">{formatPercentage(globalAverage(columns.map((column) => item[column as keyof ToolScores] as number | null)))}</td>
+                                {columns.map((column: typeof SCORE_COLUMNS[number]) => (
+                                    <td key={column} className="px-2">{item[column as keyof ToolScores] ? formatPercentage(item[column as keyof ToolScores] as number) : 'N/A'}</td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     )
 }

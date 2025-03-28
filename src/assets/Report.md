@@ -125,7 +125,7 @@ In all three task types, the overall goal is to use the AI assistant to reconstr
 
 We apply the system of execution-based validation developed by SWE-Bench. Task instances were validated by running the repository test suite three times: first, with no changes applied, as a baseline; second, with only the test patch changes applied, as another baseline; and finally, with the test and gold patch changes applied, to validate the feasibility of the task. Manual inspection pruned infeasible tasks, where tests could not be run or there were not tests that switched from fail to pass when the gold patch was applied. This validation process left us with 53 agent tasks.
 
-<div id="task_stats_container" className="flex flex-col xl:flex-row gap-3 justify-center items-center w-full">
+<div id="task_stats_container" className="flex flex-col gap-3 justify-center items-center w-full">
 <figure id="repo_stats" className="m-0 w-full">
 	<div className="overflow-x-auto w-full">
 	<table className="overflow-x-auto w-full">
@@ -134,8 +134,7 @@ We apply the system of execution-based validation developed by SWE-Bench. Task i
             <th>Repo</th>
             <th># Agent</th>
             <th># Edit</th>
-            <th># Prompted Autocomplete</th>
-            <th># Inline Autocomplete</th>
+            <th># Autocomplete</th>
         </tr>
     </thead>
     <tbody>
@@ -143,13 +142,11 @@ We apply the system of execution-based validation developed by SWE-Bench. Task i
             <td>freeCodeCamp</td>
             <td>12</td>
             <td>9</td>
-            <td>10</td>
             <td>8</td>
         </tr>
         <tr>
             <td>torchtune</td>
             <td>11</td>
-            <td>7</td>
             <td>7</td>
             <td>5</td>
         </tr>
@@ -158,12 +155,10 @@ We apply the system of execution-based validation developed by SWE-Bench. Task i
             <td>8</td>
             <td>8</td>
             <td>6</td>
-            <td>6</td>
         </tr>
         <tr>
             <td>wagtail</td>
             <td>11</td>
-            <td>9</td>
             <td>9</td>
             <td>5</td>
         </tr>
@@ -171,7 +166,6 @@ We apply the system of execution-based validation developed by SWE-Bench. Task i
             <td>junit5</td>
             <td>11</td>
             <td>11</td>
-            <td>9</td>
             <td>5</td>
         </tr>
     </tbody>
@@ -252,43 +246,7 @@ We apply the system of execution-based validation developed by SWE-Bench. Task i
       <td>4</td>
     </tr>
     <tr>
-      <td rowspan="5">Prompted Autocomplete</td>
-      <td># Hunks</td>
-      <td>1</td>
-      <td>2</td>
-      <td>3.27</td>
-      <td>16</td>
-    </tr>
-    <tr>
-      <td># Additions Per Hunk</td>
-      <td>1</td>
-      <td>1</td>
-      <td>2.3</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <td># Files Modified</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1.9</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <td>Prompt Length (characters)</td>
-      <td>145</td>
-      <td>312.71</td>
-      <td>354.74</td>
-      <td>1242</td>
-    </tr>
-    <tr>
-      <td># Edit Locations</td>
-      <td>1</td>
-      <td>2</td>
-      <td>4.07</td>
-      <td>22</td>
-    </tr>
-    <tr>
-      <td rowspan="3">Inline Autocomplete</td>
+      <td rowspan="3">Autocomplete</td>
       <td># Hunks</td>
       <td>1</td>
       <td>1</td>
@@ -370,13 +328,11 @@ The inference process for this task type is in general very similar to that of t
 5. Revert the application of the gold patch and generate a solution patch file using `git diff`
 During evaluation, the partial gold patch is applied prior to applying the agent's solution patch (i.e. prior to [step 4](#task-evaluation)).
 ### Autocomplete Task
-The autocomplete task evaluates the utility of inline completions in making small-scale changes to repository code. The difficulty of this task comes from the dependence of the changes on code from the rest of the current file or other files in the repository. This task simulates the most involved form of AI-assisted development, where a developer's code-writing ability is directly supplemented by the completion suggestions. We evaluate autocomplete in two modalities: prompted, where a natural-language prompt is placed as a comment in the line above where the code should be generated; and inline, where a portion of a line of code itself is pasted and the assistant must complete it. This provides us with a comprehensive understanding of each tool's capabilities.
+The autocomplete task evaluates the utility of inline completions in making small-scale changes to repository code. The difficulty of this task comes from the dependence of the changes on code from the rest of the current file or other files in the repository. This task simulates the most involved form of AI-assisted development, where a developer's code-writing ability is directly supplemented by the completion suggestions.
 
 Task instances for this category were similarly extracted as the edit tasks, the major difference being the localization of changes to individual patch hunks rather than entire files. Specifically, patch hunks were filtered to remove any that did not include code changes, had non-contiguous additions, or more than 8 line additions, leaving only sets of few-line changes. 
 
-For the prompted tasks, each hunk was then passed into an LM (Claude 3.5 Sonnet) to generate a specific description of the changes. Hunks and their prompts from the same original task were then grouped back together to create the task instances. This process left us with 41 prompted autocomplete tasks with a total of 128 hunks to complete.
-
-For the inline tasks, we filtered further to restrict the scope of modifications to just a few hunks (at most) within one file. We kept only hunks where we judged the changes to be feasible to reproduce given no information aside from variable and function names (and the broader context of the current file and other files in the codebase). For instance, we filtered out hunks that contained additions or modifications to string values like error messages, as there is no reasonable chance of an autocomplete model predicting the correct value. Grouping together by task left us with 29 inline autocomplete tasks with a total of 56 hunks to complete.
+We filtered further to restrict the scope of modifications to just a few hunks (at most) within one file. We kept only hunks where we judged the changes to be feasible to reproduce given no information aside from variable and function names (and the broader context of the current file and other files in the codebase). For instance, we filtered out hunks that contained additions or modifications to string values like error messages, as there is no reasonable chance of an autocomplete model predicting the correct value. Grouping together by task left us with 29 autocomplete tasks with a total of 56 hunks to complete.
 
 The inference process is as follows:
 
@@ -384,14 +340,10 @@ The inference process is as follows:
 2. Apply the gold patch, aside from the hunks to be completed
 	1. We additionally apply a "removal" patch, containing only the removals from the hunks to be completed, so that they do not influence the autocomplete model's predictions.
 3. Activate the tool and open the relevant files
-4. (Prompted Tasks) For each hunk to be completed:
-	1. Copy the generated autocomplete prompt and paste it as a comment in the line prior to where the additions should be
-	2. Press enter and tab until suggestions appear
-	3. While there are still still completion suggestions (up to a maximum of 5 acceptances), press tab to accept each suggestion and then enter to move to the next line
-5. (Inline Tasks) For each hunk to be completed, for each statement (e.g. variable assignment, function declaration, method call, conditional) addition from the gold patch:
+4. For each hunk to be completed, for each statement (e.g. variable assignment, function declaration, method call, conditional) addition from the gold patch:
 	1. Copy the beginning of the statement (e.g. up to the equals sign, first opening parenthesis, period, or bracket) and paste it at the correct line
 	2. Press tab to accept suggestions until there are no more
-6. Once all hunks have been processed, revert the gold patch application and generate the solution patch
+5. Once all hunks have been processed, revert the gold patch application and generate the solution patch
 During evaluation, the gold patch (stripped of the autocomplete hunks) is applied prior to applying the solution patch.
 
 In some cases, autocomplete models get stuck in loops of generating the same suggestions repeatedly. When this occurred, we kept only the first repetition of the suggestions.
@@ -400,17 +352,17 @@ Tools were generally setup and evaluated using default settings, with "agent" mo
 
 Github Copilot was evaluated using a pre-release build in Visual Studio Code - Insiders, to enable the agent functionality. The autocomplete model was left as the default; in the future, we may re-evaluate this task using the newer GPT-4O autocomplete preview.
 
-Agent and edit task patches were collected for all tools as of March 14th, 2025. Prompted autocomplete evaluation was performed during the week of March 17th, 2025. Inline autocomplete evaluation was performed during the week of March 24th, 2025.
+Agent and edit task patches were collected for all tools as of March 14th, 2025. Autocomplete evaluation was performed during the week of March 24th, 2025.
 # Results and Discussion
 
 <div id="results_container" className="flex flex-col lg:flex-row gap-3 justify-center items-center w-full">
-<figure id="full_results_graph" className="flex flex-col items-center m-0 w-full">
+<figure id="full_results_graph" className="flex flex-col items-center m-0 w-full md:w-2/3 lg:w-full">
 	<img src="/full_graph.png" alt="Resolution scores by tool and task type" width="100%" height="100%" className="object-contain"/>
 	<figcaption>Figure 1: A graph of resolution scores for each evaluated tool, split among the three task types</figcaption>
 </figure>
-<figure id="score_by_repo" className="flex flex-col items-center m-0 w-full">
-	<img src="/radar_agent_and_edit.png" alt="Task resolution rates by repository" width="100%" height="100%" className="object-contain"/>
-	<figcaption>Figure 2: A radar chart of task resolution rates by repository for the agent and edit tasks. Task types are overlaid on top of each other.</figcaption>
+<figure id="score_by_repo" className="flex flex-col items-center m-0 w-full md:w-2/3 lg:w-full">
+	<img src="/radar.png" alt="Task resolution rates by repository" width="100%" height="100%" className="object-contain"/>
+	<figcaption>Figure 2: A radar chart of task resolution rates by repository. Task types are overlaid on top of each other.</figcaption>
 </figure>
 </div>
 
@@ -420,15 +372,7 @@ Agent and edit task patches were collected for all tools as of March 14th, 2025.
 
 It is interesting to analyze the degree of improvement between the agent and edit tasks is not consistent among the tools. While the top six agent scores are within a few percent of each other, the edit task results had greater variance. The general equality among assistants for the agent task is likely attributable to the same model being used and (in general) the same tools being provided as part of the agent framework, e.g. read file, edit file, search directory, run bash command. When given complete autonomy and a detailed, high-level description of the task, it seems the raw model intelligence may be the most important factor. Since the agent task provides no hints as to where changes need to be made, exploration of the codebase is also a given. The edit task's specification of the file to be edited may appear to make this task much easier, but the changes needed may still depend on context from other files. It's likely that the agents who saw less improvement between the agent and edit tasks were less likely to still explore the codebase when prompted with the specific edit file; in contrast, Aider, which always automatically explores to generate a repository map at the beginning of execution, saw the greatest improvement of all between the agent and edit tasks. The edit task also does not directly inform the agent of recent changes made to the codebase as part of the partially applied PR. Future work could investigate the impact of the context and information directly provided as part of the edit task prompt. Overall, we see that only Aider and OpenHands had universally improved performance between the agent and edit tasks, though other agents tended to only perform worse in one repository for the edit task.
 
-<div id="autocomplete_results_container" className="flex flex-col lg:flex-row gap-3 justify-center items-center w-full">
-<figure id="autocomplete_by_repo" className="flex flex-col items-center m-0 lg:w-150 xl:w-200">
-	<img src="/radar_autocomplete.png" alt="Task resolution rates by repository" width="100%" height="100%" className="object-contain"/>
-	<figcaption>Figure 2: A radar chart of task resolution rates by repository for the autocomplete tasks. Task types are overlaid on top of each other.</figcaption>
-</figure>
-
-</div>
-
-Both variants of the autocomplete task proved more difficult than expected. Most likely, this difficulty comes from the generally lower intelligence capacity of autocomplete models, as they are much more optimized for speed of generations. We found that the largest challenge for the autocomplete task was knowing when to stop; in many cases, the first few suggestions from the model would constitute a complete and correct solution, but the model would go on to suggest additional breaking code that would result in task failure. Autocomplete models additionally produced code that failed to compile or had errors aside from just test failures.
+The autocomplete task proved more difficult than expected. Most likely, this difficulty comes from the generally lower intelligence capacity of autocomplete models, as they are much more optimized for speed of generations. We found that the largest challenge for the autocomplete task was knowing when to stop; in many cases, the first few suggestions from the model would constitute a complete and correct solution, but the model would go on to suggest additional breaking code that would result in task failure. Autocomplete models additionally produced code that failed to compile or had errors aside from just test failures.
 
 Our autocomplete task formats do not engage with certain additional features often included as part of autocomplete functionality, such as next edit prediction, where a tool may save time by predicting future edits in other parts of the same file. The constrained nature of this autocomplete task means its results are not a fully representative view of the average developer experience of using these tools. A survey measuring actual keystroke reduction as developers complete tasks using different autocomplete tools could be an illuminating additional view of the state of AI autocomplete.
 

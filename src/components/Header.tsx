@@ -15,8 +15,8 @@ const Header = () => {
       <div className="mx-auto px-4">
         <div className="flex flex-col items-center mb-4 pt-4">
           <h1 className="text-5xl font-bold text-gray-800 mb-2">LiveSWEBench</h1>
-          <p className="text-xl text-gray-600 mt-0 mb-0 text-center">A Challenging, Contamination-Free Benchmark for AI Software Engineers</p>
-          <h2 className="text-xl text-gray-600 mt-0 mb-0 text-center">From the creators of <a href="https://livebench.ai/" className="text-blue-600">LiveBench</a></h2>
+          <h2 className="text-2xl text-gray-600 mt-0 mb-0 text-center">A Challenging, Contamination-Free Benchmark for AI Software Engineers</h2>
+          <h3 className="text-xl text-gray-500 mt-0 mb-0 text-center">From the creators of <a href="https://livebench.ai/" className="text-blue-600">LiveBench</a></h3>
         </div>
         
         <nav className="flex justify-center items-center flex-wrap gap-4 mx-auto max-w-4xl">
