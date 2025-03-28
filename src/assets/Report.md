@@ -355,12 +355,12 @@ Github Copilot was evaluated using a pre-release build in Visual Studio Code - I
 Agent and edit task patches were collected for all tools as of March 14th, 2025. Autocomplete evaluation was performed during the week of March 24th, 2025.
 # Results and Discussion
 
-<div id="results_container" className="flex flex-col lg:flex-row gap-3 justify-center items-center w-full">
-<figure id="full_results_graph" className="flex flex-col items-center m-0 w-full md:w-2/3 lg:w-full">
+<div id="results_container" className="flex flex-col xl:flex-row gap-3 justify-center items-center w-full">
+<figure id="full_results_graph" className="flex flex-col items-center m-0 w-full md:w-2/3 xl:w-full">
 	<img src="/full_graph.png" alt="Resolution scores by tool and task type" width="100%" height="100%" className="object-contain"/>
 	<figcaption>Figure 1: A graph of resolution scores for each evaluated tool, split among the three task types</figcaption>
 </figure>
-<figure id="score_by_repo" className="flex flex-col items-center m-0 w-full md:w-2/3 lg:w-full">
+<figure id="score_by_repo" className="flex flex-col items-center m-0 w-full md:w-2/3 xl:w-full">
 	<img src="/radar.png" alt="Task resolution rates by repository" width="100%" height="100%" className="object-contain"/>
 	<figcaption>Figure 2: A radar chart of task resolution rates by repository. Task types are overlaid on top of each other.</figcaption>
 </figure>
