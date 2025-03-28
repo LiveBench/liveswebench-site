@@ -688,7 +688,7 @@ LiveSWEBench answers the following questions:
 Our goal is to provide a useful aid for developers and organizations choosing which tools to incorporate into their workflows by evaluating tools in the most common use cases. 
 
 Inspired by benchmarks like [LiveBench](https://livebench.ai), LiveSWEBench aims to prevent test set contamination and stay in line with developing agent capabilities by updating tasks over time. 
-Our tasks are sourced from issue-pull request pairs from five real-world Github repositories. The initial results are based on 143 total tasks split among three task types, but our flexible and efficient collection process means we will be able to add new tasks or refresh existing ones in the future.
+Our tasks are sourced from issue-pull request pairs from five real-world Github repositories. The initial results are based on 126 total tasks split among three task types, but our flexible and efficient collection process means we will be able to add new tasks or refresh existing ones in the future.
 # Overview
 LiveSWEBench consists of 3 task types, each of which evaluates AI coding assistants at a different level of developer involvement:
 1. Fully agentic tasks, where assistants are given a real-world Github issue and asked to solve it entirely autonomously (similar to [SWE-Bench](https://www.swebench.com/))
