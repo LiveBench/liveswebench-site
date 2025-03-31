@@ -993,6 +993,7 @@ The inference process is as follows:
 3. Prompt the tool with the text of the Github issue
 4. Accept all suggestions, allow all terminal commands, etc, until the tool finishes generating
 5. Generate a patch file record of the suggested changes using \`git diff\`
+
 ### Targeted Edits Task
 The targeted editing task evaluates the ability of the assistant to generate code changes when given a specific edit prompt in a single file. This simulates a common use case for AI assistants (especially prior to the development of agentic functionality) wherein a developer, working on a broader issue, can summarize the needed local changes into a prompt for the assistant. The prompts for this task are more similar to what would be included in a pull request description: a high level, few sentence explanation of the changes. The assistant is instructed with the name of the file to edit; however, it is not told the names of other files that may be relevant for understanding the prompt or generating the edits. This task therefore still relies on some level of agentic capability or integration of broader repository context into the prompt.
 
@@ -1006,6 +1007,7 @@ The inference process for this task type is in general very similar to that of t
 3. Activate the tool and prompt with the edit prompt and name of the edit file (selected as context, in tools that support such selection)
 4. Accept all suggestions, allow all terminal commands, etc, until generation is finished
 5. Revert the application of the gold patch and generate a solution patch file using \`git diff\`
+
 During evaluation, the partial gold patch is applied prior to applying the agent's solution patch (i.e. prior to [step 4](#task-evaluation)).
 ### Autocomplete Task
 The autocomplete task evaluates the utility of inline completions in making small-scale changes to repository code. The difficulty of this task comes from the dependence of the changes on code from the rest of the current file or other files in the repository. This task simulates the most involved form of AI-assisted development, where a developer's code-writing ability is directly supplemented by the completion suggestions.
@@ -1024,6 +1026,7 @@ The inference process is as follows:
 	1. Copy the beginning of the statement (e.g. up to the equals sign, first opening parenthesis, period, or bracket) and paste it at the correct line
 	2. Press tab to accept suggestions until there are no more
 5. Once all hunks have been processed, revert the gold patch application and generate the solution patch
+
 During evaluation, the gold patch (stripped of the autocomplete hunks) is applied prior to applying the solution patch.
 
 In some cases, autocomplete models get stuck in loops of generating the same suggestions repeatedly. When this occurred, we kept only the first repetition of the suggestions.
