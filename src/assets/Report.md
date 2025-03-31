@@ -8,7 +8,7 @@ LiveSWEBench answers the following questions:
 Our goal is to provide a useful aid for developers and organizations choosing which tools to incorporate into their workflows by evaluating tools in the most common use cases. 
 
 Inspired by benchmarks like [LiveBench](https://livebench.ai), LiveSWEBench aims to prevent test set contamination and stay in line with developing agent capabilities by updating tasks over time. 
-Our tasks are sourced from issue-pull request pairs from five real-world Github repositories. The initial results are based on 143 total tasks split among three task types, but our flexible and efficient collection process means we will be able to add new tasks or refresh existing ones in the future.
+Our tasks are sourced from issue-pull request pairs from five real-world Github repositories. The initial results are based on 126 total tasks split among three task types, but our flexible and efficient collection process means we will be able to add new tasks or refresh existing ones in the future.
 # Overview
 LiveSWEBench consists of 3 task types, each of which evaluates AI coding assistants at a different level of developer involvement:
 1. Fully agentic tasks, where assistants are given a real-world Github issue and asked to solve it entirely autonomously (similar to [SWE-Bench](https://www.swebench.com/))
@@ -313,6 +313,7 @@ The inference process is as follows:
 3. Prompt the tool with the text of the Github issue
 4. Accept all suggestions, allow all terminal commands, etc, until the tool finishes generating
 5. Generate a patch file record of the suggested changes using `git diff`
+
 ### Targeted Edits Task
 The targeted editing task evaluates the ability of the assistant to generate code changes when given a specific edit prompt in a single file. This simulates a common use case for AI assistants (especially prior to the development of agentic functionality) wherein a developer, working on a broader issue, can summarize the needed local changes into a prompt for the assistant. The prompts for this task are more similar to what would be included in a pull request description: a high level, few sentence explanation of the changes. The assistant is instructed with the name of the file to edit; however, it is not told the names of other files that may be relevant for understanding the prompt or generating the edits. This task therefore still relies on some level of agentic capability or integration of broader repository context into the prompt.
 
@@ -326,6 +327,7 @@ The inference process for this task type is in general very similar to that of t
 3. Activate the tool and prompt with the edit prompt and name of the edit file (selected as context, in tools that support such selection)
 4. Accept all suggestions, allow all terminal commands, etc, until generation is finished
 5. Revert the application of the gold patch and generate a solution patch file using `git diff`
+
 During evaluation, the partial gold patch is applied prior to applying the agent's solution patch (i.e. prior to [step 4](#task-evaluation)).
 ### Autocomplete Task
 The autocomplete task evaluates the utility of inline completions in making small-scale changes to repository code. The difficulty of this task comes from the dependence of the changes on code from the rest of the current file or other files in the repository. This task simulates the most involved form of AI-assisted development, where a developer's code-writing ability is directly supplemented by the completion suggestions.
@@ -344,6 +346,7 @@ The inference process is as follows:
 	1. Copy the beginning of the statement (e.g. up to the equals sign, first opening parenthesis, period, or bracket) and paste it at the correct line
 	2. Press tab to accept suggestions until there are no more
 5. Once all hunks have been processed, revert the gold patch application and generate the solution patch
+
 During evaluation, the gold patch (stripped of the autocomplete hunks) is applied prior to applying the solution patch.
 
 In some cases, autocomplete models get stuck in loops of generating the same suggestions repeatedly. When this occurred, we kept only the first repetition of the suggestions.
@@ -372,9 +375,9 @@ Agent and edit task patches were collected for all tools as of March 14th, 2025.
 
 It is interesting to analyze the degree of improvement between the agent and edit tasks is not consistent among the tools. While the top six agent scores are within a few percent of each other, the edit task results had greater variance. The general equality among assistants for the agent task is likely attributable to the same model being used and (in general) the same tools being provided as part of the agent framework, e.g. read file, edit file, search directory, run bash command. When given complete autonomy and a detailed, high-level description of the task, it seems the raw model intelligence may be the most important factor. Since the agent task provides no hints as to where changes need to be made, exploration of the codebase is also a given. The edit task's specification of the file to be edited may appear to make this task much easier, but the changes needed may still depend on context from other files. It's likely that the agents who saw less improvement between the agent and edit tasks were less likely to still explore the codebase when prompted with the specific edit file; in contrast, Aider, which always automatically explores to generate a repository map at the beginning of execution, saw the greatest improvement of all between the agent and edit tasks. The edit task also does not directly inform the agent of recent changes made to the codebase as part of the partially applied PR. Future work could investigate the impact of the context and information directly provided as part of the edit task prompt. Overall, we see that only Aider and OpenHands had universally improved performance between the agent and edit tasks, though other agents tended to only perform worse in one repository for the edit task.
 
-The autocomplete task proved more difficult than expected. Most likely, this difficulty comes from the generally lower intelligence capacity of autocomplete models, as they are much more optimized for speed of generations. We found that the largest challenge for the autocomplete task was knowing when to stop; in many cases, the first few suggestions from the model would constitute a complete and correct solution, but the model would go on to suggest additional breaking code that would result in task failure. Autocomplete models additionally produced code that failed to compile or had errors aside from just test failures.
+The autocomplete task proved more difficult than expected. Most likely, this difficulty comes from the generally lower intelligence capacity of autocomplete models, as they are much more optimized for speed of generations. We found that the largest challenge for the autocomplete task was knowing when to stop; in many cases, the first few suggestions from the model would constitute a complete and correct solution, but the model would go on to suggest additional breaking code that would result in task failure. Autocomplete models additionally frequently produced code that failed to compile or had errors aside from just test failures.
 
-Our autocomplete task formats do not engage with certain additional features often included as part of autocomplete functionality, such as next edit prediction, where a tool may save time by predicting future edits in other parts of the same file. The constrained nature of this autocomplete task means its results are not a fully representative view of the average developer experience of using these tools. A survey measuring actual keystroke reduction as developers complete tasks using different autocomplete tools could be an illuminating additional view of the state of AI autocomplete.
+Our autocomplete task format does not engage with certain additional features often included as part of autocomplete functionality, such as next edit prediction, where a tool may save time by predicting future edits in other parts of the same file. The constrained nature of this autocomplete task means its results are not a fully representative view of the average developer experience of using these tools. A survey measuring actual keystroke reduction as developers complete tasks using different autocomplete tools could be an illuminating additional view of the state of AI autocomplete.
 
 # Limitations and Future Work
 

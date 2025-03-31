@@ -33,15 +33,15 @@ const Header = () => {
             className="px-4 py-2 text-white bg-black hover:bg-gray-600 rounded-full no-underline flex-grow-0"
             target="_blank" 
             rel="noopener noreferrer"
-            onClick={(e) => { e.preventDefault(); alert('Code release coming soon!'); }}
           >
             <FontAwesomeIcon icon={faGithub} className="mr-2" />
             Code
           </a>
           <a 
-            href="#" 
+            href="https://huggingface.co/datasets/livebench/liveswebench" 
             className="px-4 py-2 text-white bg-black hover:bg-gray-600 rounded-full no-underline flex-grow-0"
-            onClick={(e) => { e.preventDefault(); alert('Data download coming soon!'); }}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <FontAwesomeIcon icon={faDatabase} className="mr-2" />
             Data

@@ -1,10 +1,17 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Leaderboard from './pages/Leaderboard';
 import Details from './pages/Details';
 
 function App() {
+
+  const location = useLocation();
+  if (location.search.includes('?/')) {
+    const newPath = location.search.replace('?/', '');
+    return <Navigate to={newPath} />;
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
