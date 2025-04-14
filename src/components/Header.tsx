@@ -38,7 +38,7 @@ const Header = () => {
             Code
           </a>
           <a 
-            href="https://huggingface.co/datasets/livebench/liveswebench" 
+            href="https://huggingface.co/collections/livebench/liveswebench-67eaf012f02466f4e2a757e0" 
             className="px-4 py-2 text-white bg-black hover:bg-gray-600 rounded-full no-underline flex-grow-0"
             target="_blank"
             rel="noopener noreferrer"

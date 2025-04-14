@@ -24,10 +24,10 @@ const Leaderboard = () => {
   const toolWebsites: Record<string, string> = {
     "Windsurf": "https://www.windsurf.ai/",
     "Github Copilot": "https://github.com/features/copilot",
-    "SWE-Agent": "https://github.com/Princeton-SysML/SWE-agent",
-    "OpenHands": "https://github.com/OpenHandsAI/OpenHands",
-    "Cursor": "https://cursor.sh/",
-    "Claude Code": "https://claude.ai/",
+    "SWE-Agent": "https://swe-agent.com/latest/",
+    "OpenHands": "https://docs.all-hands.dev/",
+    "Cursor": "https://www.cursor.com/",
+    "Claude Code": "https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview",
     "Aider": "https://aider.chat/",
     "Amazon Q": "https://aws.amazon.com/q/",
   };
@@ -126,6 +126,10 @@ const Leaderboard = () => {
             </p>
             <p className="text-gray-700">
               We plan to evaluate release new tasks and evaluate more tools regularly to keep up with the latest developments and ensure the benchmark remains contamination-free.
+            </p>
+
+            <p className="text-gray-700">
+              Questions? Contact us at <a className="text-blue-600" href="mailto:contact@livebench.ai">contact@livebench.ai</a> or open a <a className="text-blue-600" href="https://github.com/livebench/liveswebench/issues">GitHub issue</a>.
             </p>
         </section>
 
